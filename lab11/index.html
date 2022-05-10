@@ -1,0 +1,123 @@
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    
+    <title>Game</title>
+    <style>
+        .info{
+            background-color: rgba(192, 192, 192,0.5);
+            color: black;
+            font-size: 32px;
+            padding:  10px 20px;
+            position: absolute;
+            z-index: 1;
+        }
+        #display{
+            background: #000;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .bubble{
+            position: absolute;
+            background-color: #f00;
+            left: 100px;
+            top: 100px;
+            width: 50px;
+            height: 50px;
+            border-radius:25px ;
+        }
+        .bubble div{
+            position: absolute;
+            background-color: #FFF;
+            left: 10px;
+            top: 10px;
+            width: 10px;
+            height: 10px;
+            border-radius:5px ;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        Ve: <span id="level"></span>
+        Vldsen bombolog: <span id="count"></span>
+        
+    </div>
+    <div id="display"></div>
+    <script>
+        var audio = new Audio("pop.wav");
+
+        var display= document.getElementById("display");
+        var level = 1;
+
+        var countSpan= document.getElementById("count");
+        var levelSpan= document.getElementById("level");
+        
+        var move= function(){
+            var bubbles = document.getElementsByClassName("bubble");
+            for(var i=0; i<bubbles.length; i++){
+            var left= parseInt(bubbles[i].style.left);
+            var top = parseInt(bubbles[i].style.top);
+            if(left + bubbles[i].moveX> display.clientWidth-50 || 
+            left + bubbles[i].moveX< 0)
+            bubbles[i].moveX *=-1;
+            
+            if(top + bubbles[i].moveY > display.clientHeight-50 ||
+            top + bubbles[i].moveY <0)
+            bubbles[i].moveY *=-1;
+            
+            bubbles[i].style.left= left+bubbles[i].moveX;
+            bubbles[i].style.top= top+bubbles[i].moveY;
+            
+            }
+            
+        };
+        var beginGame= function(){
+            for(var i=0; i<9+level; i++){
+        var bubble = document.createElement("div");
+        var light = document.createElement("div");
+
+            bubble.style.left = Math.round(Math.random() *(display.clientWidth-220));
+            bubble.style.top = Math.round(Math.random() * (display.clientHeight-220));
+
+            bubble.style.backgroundColor = "rgb("+Math.round(Math.random() * 255)+","+Math.round(Math.random() * 255)+","+Math.round(Math.random() * 255)+")"
+            var size = parseInt(Math.random()*50+50);
+
+        bubble.style.width=size.toString()+"px";
+        bubble.style.height=size.toString()+"px";
+        bubble.style.borderRadius=(size/2).toString()+"px";
+        light.style.top=(size/5)+"px";
+        light.style.left=(size/5)+"px";
+
+
+        bubble.moveX = Math.random() * 9+1;
+        bubble.moveY = Math.random() * 9+1;
+        
+            bubble.className = "bubble";
+        bubble.appendChild(light);
+        display.appendChild(bubble);
+        bubble.addEventListener("click",function(){
+            display.removeChild(this);
+            audio.play();
+            countSpan.innerHTML = display.childNodes.length;
+            if(display.childNodes.length == 0){
+                clearInterval("move()");
+                if(confirm("ta ene ueiig davlaa. Daraagiin ueiig ehluuleh uu?")){
+                    level++;
+                    beginGame();
+                }
+            }
+        });
+        }
+        setInterval("move()", 100);
+        countSpan.innerHTML = display.childNodes.length;
+        levelSpan.innerHTML = level;
+        };
+    
+        beginGame();
+    </script>
+
+</body>
+</html>
